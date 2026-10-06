@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coordinate Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body>
+<div id="login"><div class="lbox"><div class="lt"><div>COORDINATE</div><div>TRAINER</div></div>
+<p class="mu">Log in with a username. It is shown to other players in parties.</p>
+<label class="f">Username<input id="lname" type="text" maxlength="12" placeholder="e.g. Shivansh" autocomplete="nickname"></label>
+<p class="mu" id="lerr"></p><div class="row"><button class="btn g" id="lgo">Log in</button><button class="btn" id="lguest">Continue as guest</button></div>
+<p class="mu">Guests can play alone, but must type a name before joining a party.</p></div></div>
+<div id="intro"><canvas id="ic" width="1920" height="1080"></canvas>
+<div id="ititle"><div class="t"><span>◎</span> Coordinate Trainer</div><p>Learn latitude and longitude, then find any place on Earth.</p></div>
+<button id="iskip">Skip ›</button><button id="enter">Start exploring →</button>
+<button id="isnd" class="hint" aria-label="Toggle sound"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1c5cae" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="#cfe5fa"/><path id="iw" d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" style="display:none"/><path id="ix" d="M17 9l5 6M22 9l-5 6"/></svg></button></div>
+
+<header>
+ <div class="brand"><span class="w1">COORDINATE</span><span class="w2">TRAINER</span></div>
+ <nav id="nav"><button data-t="play" class="on">Play</button><button data-t="explore">Explore</button><button data-t="lines">Lines</button><button data-t="grid">Grid</button><button data-t="learn">Learn</button><button data-t="notes">Notepad</button><button data-t="party">Party</button></nav>
+ <div class="seg"><button id="vg" class="on">Globe</button><button id="vm">Map</button></div>
+ <div class="chips"><span>Score<b id="cs">0</b></span><span>Rounds<b id="cr">0</b></span><span>Average<b id="ca">–</b></span><button id="uchip" class="uchip" title="Change username">Guest · Log in</button><button id="sndtog" class="ibtn"></button></div>
+</header>
+<div id="app">
+ <div id="mapwrap"><canvas id="map"></canvas>
+  <div id="help">Scroll to zoom · drag to move · double-click to zoom in</div>
+  <div id="sboard" hidden></div>
+  <div id="zoom"><button id="zi" title="Zoom in">+</button><input id="zsl" type="range" min="0" max="1000" value="0"><button id="zo" title="Zoom out">−</button><button id="zh" title="Reset view">⌂</button><div id="zl">×1.0</div></div>
+  <div id="mtimer" hidden></div><div id="tip" hidden></div><div id="info"><div id="irow"><div id="stat">Move over the map to read coordinates</div><button id="pinbtn" hidden title="Show the exact location of the point you clicked"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#fff" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg></button></div><div id="pinmsg" hidden></div></div>
+  <div id="load">Loading map…</div>
+ </div>
+ <aside>
+  <div id="mission" hidden></div>
+  <section class="pane" id="p-play"><h2>Play</h2><p class="mu">Train your eye for latitude and longitude.</p>
+   <div class="seg2"><button id="tg" class="on">Guess</button><button id="tt">Try</button></div>
+   <p id="prompt">Loading…</p>
+   <div id="tin" class="row" hidden><label class="f">Latitude<input id="ilat" type="text" placeholder="28.6 or 28.6N"></label><label class="f">Longitude<input id="ilon" type="text" placeholder="77.2 or 77.2E"></label></div>
+   <div class="row"><button class="btn g" id="sub" disabled>Submit</button><button class="btn" id="hnt" hidden>Hint: show cell (−20%)</button></div>
+   <p class="mu"><b>Guess:</b> a coordinate is shown, click where you think it is. <b>Try:</b> a country is shown, type a coordinate inside it. Score is out of 5000 and falls with distance.</p>
+   <div id="res" class="out" hidden></div></section>
+  <section class="pane" id="p-explore" hidden><h2>Explore</h2><p class="mu">Look things up while you learn.</p>
+   <h3>Go to a coordinate</h3>
+   <div class="row"><label class="f">Latitude<input id="elat" type="text" placeholder="48.86 or 48.86N"></label><label class="f">Longitude<input id="elon" type="text" placeholder="2.35 or 2.35E"></label><button class="btn g" id="ego">Go</button></div>
+   <h3>Find a country</h3>
+   <div class="row"><input id="cname" class="wide" type="text" list="clist" placeholder="e.g. India"><button class="btn g" id="cgo">Find</button></div><datalist id="clist"></datalist>
+   <h3>Landmark cities</h3>
+   <label class="ln"><input type="checkbox" id="cities"><span>Show 34 anchor cities on the map<small>Memorise their coordinates, then compare any new point against them.</small></span></label>
+   <div id="exres" class="out" hidden></div></section>
+  <section class="pane" id="p-lines" hidden><h2>Reference lines</h2><p class="mu">Hidden until you switch them on.</p><div id="lines"></div>
+   <div class="row"><button class="btn" id="la">Show all</button><button class="btn" id="lh">Hide all</button></div></section>
+  <section class="pane" id="p-grid" hidden><h2>Divide the Earth</h2><p class="mu">Cut the world into x columns (longitude) by y rows (latitude).</p>
+   <div class="row"><label class="f">x columns<input id="gx" type="number" value="20" min="1" max="72"></label><label class="f">y rows<input id="gy" type="number" value="10" min="1" max="36"></label>
+   <button class="btn g" id="ga">Divide</button><button class="btn" id="gc">Clear</button></div><p class="mu" id="ginfo">Try 20 × 10, then hover the map: the cell under your cursor lights up.</p></section>
+  <section class="pane" id="p-learn" hidden><h2>Learn</h2>
+   <h3>Core rules</h3><ul><li><b>Latitude</b>: 0° to 90° from the Equator. N is positive, S is negative.</li><li><b>Longitude</b>: 0° to 180° from the Prime Meridian. E is positive, W is negative.</li><li>1° of latitude ≈ 111 km. 1° of longitude ≈ 111 km × cos(latitude).</li><li>15° of longitude = 1 hour of time.</li></ul>
+   <h3>Quadrants (lat, lon)</h3><table><tr><td>+ , +</td><td>Europe, Asia, N. Africa</td></tr><tr><td>+ , −</td><td>North America</td></tr><tr><td>− , +</td><td>S. Africa, Australia, Indonesia</td></tr><tr><td>− , −</td><td>South America</td></tr></table>
+   <h3>Latitude bands</h3><table><tr><td>0°</td><td>Quito, Nairobi, Singapore</td></tr><tr><td>20°N</td><td>Mumbai, Mexico City</td></tr><tr><td>30°N</td><td>Cairo, Delhi, Shanghai</td></tr><tr><td>40°N</td><td>Beijing, Madrid, New York</td></tr><tr><td>50°N</td><td>London, Paris</td></tr><tr><td>60°N</td><td>Oslo, Anchorage</td></tr><tr><td>34°S</td><td>Sydney, Cape Town, Buenos Aires</td></tr></table>
+   <h3>Longitude anchors</h3><table><tr><td>0°</td><td>London, Accra</td></tr><tr><td>30°E</td><td>Cairo, Istanbul</td></tr><tr><td>55°E</td><td>Dubai</td></tr><tr><td>77°E</td><td>Delhi</td></tr><tr><td>100°E</td><td>Bangkok</td></tr><tr><td>140°E</td><td>Tokyo</td></tr><tr><td>74°W</td><td>New York</td></tr><tr><td>118°W</td><td>Los Angeles</td></tr><tr><td>43°W</td><td>Rio de Janeiro</td></tr></table>
+   <h3>Method</h3><ol><li>Use the signs to pick the quadrant.</li><li>Match longitude to an anchor meridian to find the continent.</li><li>Match latitude to a band to find the climate zone.</li><li>Find the nearest anchor city and count the degrees away.</li><li>Multiply by 111 km to check the distance.</li></ol></section>
+   <section class="pane" id="p-notes" hidden><h2>Notepad</h2><p class="mu">Your notes are saved in this browser automatically.</p>
+   <textarea id="nt" placeholder="Write anything here: coordinates to remember, tricks, mistakes…"></textarea>
+   <div class="row"><button class="btn g" id="npin">+ Clicked point</button><button class="btn" id="nlast">+ Last round</button><button class="btn" id="ncp">Copy</button><button class="btn" id="nclr">Clear</button></div>
+   <p class="mu" id="nmsg"></p></section>
+   <section class="pane" id="p-party" hidden><h2>Party</h2>
+   <div id="pm-home"><p class="mu">Play with friends. Everyone opens this page while signed in; the host sends the page link and the party code.</p>
+    <label class="f">Your name<input id="pname" type="text" maxlength="12" placeholder="Your name"></label>
+    <div class="row"><button class="btn g" id="pcreate">Create party</button></div>
+    <h3>Join a party</h3><div class="row"><label class="f">Party code<input id="pcode" type="text" maxlength="5" placeholder="K7M2Q"></label><button class="btn" id="pjoin">Join</button></div><p class="mu" id="pmsg"></p></div>
+   <div id="pm-setup" hidden><h3>Party settings</h3>
+    <div class="q">Game mode</div><div class="chipset" data-k="mode"><button data-v="guess" class="on">Guess: click the map</button><button data-v="try">Try: type a coordinate</button></div>
+    <div class="q">Grid system</div><div class="chipset" data-k="grid"><button data-v="false" class="on">No grid</button><button data-v="true">Grid</button></div>
+    <div id="pgrid" class="row" hidden><label class="f">x columns<input id="sgx" type="number" value="20" min="1" max="72"></label><label class="f">y rows<input id="sgy" type="number" value="10" min="1" max="36"></label></div>
+    <div class="q">Time to guess</div><div class="chipset" data-k="time"><button data-v="10">10 s</button><button data-v="15">15 s</button><button data-v="30" class="on">30 s</button><button data-v="60">60 s</button><button data-v="90">90 s</button><button data-v="0">No timer</button></div>
+    <div class="q">Pinpoint location tag</div><div class="chipset" data-k="pin"><button data-v="true" class="on">On</button><button data-v="false">Off</button></div><p class="mu">Off hides the live coordinates, the country name tag and the clicked-point info during the game.</p>
+    <div class="q">Rounds</div><div class="chipset" data-k="rounds"><button data-v="3">3</button><button data-v="5" class="on">5</button><button data-v="10">10</button><button data-v="15">15</button></div>
+    <div class="row"><button class="btn g" id="pgo">Create party</button><button class="btn" id="pback">Back</button></div></div>
+   <div id="pm-lobby" hidden><div class="cap">Party code</div><div class="code" id="pcode2"></div><div class="row"><button class="btn" id="pcopy">Copy code</button></div>
+    <p class="mu" id="pmeta"></p><p class="mu" id="plocal" hidden>Same-browser mode: online play is not enabled in this view, so only tabs of this browser can join. Open the published page link in claude.ai (signed in) for online play with friends.</p><div class="q">Players</div><div id="plist"></div>
+    <div class="row"><button class="btn g" id="pstart">Start game</button><button class="btn" id="pleave">Leave</button></div><p class="mu" id="pwait">Waiting for the host to start…</p></div>
+   <div id="pm-game" hidden><p class="mu" id="pgmeta"></p><p id="pgprompt"></p>
+    <div id="pgin" class="row" hidden><label class="f">Latitude<input id="milat" type="text" placeholder="28.6 or 28.6N"></label><label class="f">Longitude<input id="milon" type="text" placeholder="77.2 or 77.2E"></label></div>
+    <div class="row"><button class="btn g" id="pgsub">Lock in guess</button></div><p class="mu" id="pgstat"></p><div id="pgres" class="out" hidden></div>
+    <div class="row"><button class="btn g" id="pgnext" hidden>Next round</button><button class="btn" id="pgagain" hidden>Play again</button><button class="btn" id="pgleave">Leave party</button></div></div>
+  </section>
+ </aside>
+</div>
+
+<script type="module" src="main.js"></script>
+</body></html>

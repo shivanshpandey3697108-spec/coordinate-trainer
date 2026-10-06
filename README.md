@@ -1,22 +1,19 @@
-# Coordinate Trainer
+# Coordinate Trainer - Modular Version
 
-This project has been split from the original single HTML file into:
+The uploaded Coordinate Trainer has been converted from one HTML file into a maintainable module structure while preserving its existing map, data, game logic, Party mode, intro animation, and styling.
 
-- `index.html` - page structure and game markup
-- `style.css` - all CSS styles
-- `d3.bundle.js` - the bundled D3/geo code already present in the original file
-- `app.js` - main Coordinate Trainer game logic
-- `intro.js` - intro animation/sound screen
+## Structure
+- `index.html` - HTML structure
+- `style.css` - styles
+- `main.js` - entry point
+- `modules/game.js` - main map, Play, Explore, Lines, Grid, Learn, Notepad and Party logic
+- `modules/audio.js` - sound effects and sound state
+- `modules/intro.js` - landing/intro animation
+- `modules/data.js` - geographic dataset
+- `modules/d3.bundle.js` - embedded D3 geographic library
 
-## Run locally
-
-Open `index.html` in a browser, or preferably use VS Code Live Server.
+## Run
+Use VS Code Live Server or another static web server. ES modules should be served over HTTP rather than opened directly with `file://`.
 
 ## GitHub Pages
-
-Upload all files to the same repository directory and make sure `index.html` is in the published root.
-
-GitHub Pages:
-Settings -> Pages -> Deploy from a branch -> `main` -> `/ (root)`.
-
-Keep all five files together. The game also contains its map data inside `index.html`, so do not remove the two `application/json` data blocks.
+Keep `index.html` in the repository root and upload the complete folder structure.
